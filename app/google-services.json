@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "214847551726",
+    "firebase_url": "https://dicedate-a5dc8-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "dicedate-a5dc8",
+    "storage_bucket": "dicedate-a5dc8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:214847551726:android:b086f7c8e36327cf2e5bff",
+        "android_client_info": {
+          "package_name": "com.example.zeiterfassung"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADgidNQbo9gTqLMYzJeTxAWPEyEgyf6E0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
