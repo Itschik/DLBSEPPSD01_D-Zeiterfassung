@@ -7,95 +7,106 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-
-
+/**
+ * LoginActivity – Ermöglicht das Einloggen von Benutzern (Mitarbeiter & Vorgesetzte)
+ * Authentifiziert über Firebase Authentication und bestimmt die Rolle über Firebase Realtime Database.
+ */
 public class LoginActivity extends AppCompatActivity {
 
-    // Hier wird der Zurückbutton für diese Activity blockiert
+    /**
+     * Blockiert den Android-Zurück-Button.
+     * Benutzer sollen zum Beenden den Schließen Button verwenden.
+     */
     @SuppressLint("MissingSuperCall")
     @Override
     public void onBackPressed() {
         Toast.makeText(this, "Icon oben rechts tippen um die App zu schließen", Toast.LENGTH_SHORT).show();
     }
 
-
-
+    // UI-Komponenten
     private EditText emailEditText, passwordEditText;
-    private Button loginButton;
-    private Button exitButton;
 
-    private FirebaseAuth mAuth;
-    private DatabaseReference userRef;
-
-
+    // Firebase
+    private FirebaseAuth mAuth;                   // Für Authentifizierung
+    private DatabaseReference userRef;            // Für Datenbankzugriff auf Nutzerrollen
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);  // <--- Name der Layout-XML
+        setContentView(R.layout.activity_login);  // Verknüpft XML-Layout mit Activity
 
-        // Goolge Firebase Realtime Database Verbindung zur NoSQL herstellen, Pfad "users"
+        // Initialisiere Firebase Authentication und verweise auf den "users"-Zweig in der Realtime Database
         mAuth = FirebaseAuth.getInstance();
         userRef = FirebaseDatabase.getInstance().getReference("users");
 
-        //Variablen zuweisen
+        // Zuweisung der UI-Elemente
         emailEditText = findViewById(R.id.mitarbeiterEmailInput);
         passwordEditText = findViewById(R.id.passwortInput);
-        loginButton = findViewById(R.id.loginButton);
-        exitButton = findViewById(R.id.ExitAppButton);
+        Button loginButton = findViewById(R.id.loginButton);
+        Button exitButton = findViewById(R.id.ExitAppButton);
 
-        // Nullwerte den Eingabefelder zuweisen
+        // Eingabefelder beim Start leeren
         emailEditText.setText("");
         passwordEditText.setText("");
 
-        // Methode für login aufrufen
+        // Login-Button mit Login-Funktion verknüpfen
         loginButton.setOnClickListener(v -> loginUser());
 
-        // Methode für das Beenden der App aufrufen
+        // Exit-Button mit Exit-Funktion verknüpfen
         exitButton.setOnClickListener(v -> exitApp());
     }
 
-    // Methode für den Login
+    /**
+     * Diese Methode führt den Login-Vorgang mit Firebase durch.
+     * Nach erfolgreicher Anmeldung wird die Rolle des Benutzers geladen und zur passenden Activity weitergeleitet.
+     */
     private void loginUser() {
+        // Eingaben holen und trimmen
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
+        // Eingabevalidierung
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Bitte Emailadresse und Passwort eingeben.", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        // Anmeldung bei Firebase Authentication
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener(authResult -> {
+                    // UID des aktuellen Benutzers
                     String uid = mAuth.getCurrentUser().getUid();
 
+                    // Benutzerrolle aus Realtime Database abrufen
                     userRef.child(uid).child("role").get().addOnSuccessListener(snapshot -> {
                         String role = snapshot.getValue(String.class);
 
+                        // Activity basierend auf Rolle starten
                         if ("mitarbeiter".equals(role)) {
-                            Intent intent = new Intent(this, EmployeeActivity.class);
-                            startActivity(intent);
+                            startActivity(new Intent(this, EmployeeActivity.class));
                         } else if ("vorgesetzter".equals(role)) {
-                            Intent intent = new Intent(this, SupervisorActivity.class);
-                            startActivity(intent);
+                            startActivity(new Intent(this, SupervisorActivity.class));
                         }
-                        finish();  // Beendet die aktuelle Activity
+
+                        // LoginActivity beenden
+                        finish();
                     });
 
                 }).addOnFailureListener(e ->
+                        // Bei Fehlern: Fehlermeldung anzeigen
                         Toast.makeText(this, "Login fehlgeschlagen!\nE-Mail oder Passwort falsch.", Toast.LENGTH_SHORT).show()
                 );
     }
 
-    // Methode für Beenden der App
-    private void exitApp (){
-        finishAndRemoveTask();
-        //Diese Methode schließt alle Activities in der aktuellen Task und beendet die App und den Prozess.
+    /**
+     * Beendet die App vollständig (inkl. aller offenen Activities).
+     */
+    private void exitApp() {
+        finishAndRemoveTask();  // Beendet die Task und entfernt sie aus dem App-Switcher
     }
 }

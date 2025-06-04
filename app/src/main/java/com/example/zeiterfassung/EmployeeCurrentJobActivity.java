@@ -17,55 +17,59 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+/**
+ * Activity zur Anzeige und Bearbeitung des aktuellen Auftrags eines Mitarbeiters.
+ * Hier kann der Mitarbeiter die Auftragsdauer eingeben, den Auftrag als erledigt melden,
+ * weitere Informationen anzeigen oder zur vorherigen Ansicht zurückkehren.
+ */
 public class EmployeeCurrentJobActivity extends AppCompatActivity {
 
-    /** @noinspection deprecation*/ // Hier wird der Zurückbutton für diese Activity blockiert
+    /**
+     * Verhindert, dass der Benutzer mit dem Zurück-Button der Hardware die Activity verlässt.
+     * Stattdessen erscheint ein Toast mit einem Hinweis.
+     */
     @SuppressLint("MissingSuperCall")
     @Override
     public void onBackPressed() {
         Toast.makeText(this, "Bitte den zurück Button benutzen!", Toast.LENGTH_SHORT).show();
     }
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_employee_current_job);
 
-        // XML-Elemente mit dem Code verbinden
+        // Verknüpfe die Buttons aus dem XML-Layout mit den Java-Objekten
         Button backToEmployeePage_Button_E = findViewById(R.id.backToLoginPage_Button_Mitarbeiter);
         Button chat_Employee_Button_E = findViewById(R.id.chat_Button_Mitarbeiter);
         Button showDialogMoreInformationButton_E = findViewById(R.id.moreInformationElevatedButton);
         Button finishJobButton = findViewById(R.id.jobDoneButton_Mitarbeiter);
 
-        // Hier wird das Eingabefeld der Zahlen von 0-10 begrenzt, damit man keine mehr als 10h arbeiten kann
-        //------------------------------------------------------------------------------------------------------------------
+        // Eingabefeld für die Auftragsdauer (Arbeitszeit)
         EditText editText = findViewById(R.id.auftragsDauerMitarbeiter_Input);
 
+        // Eingabefilter um die erlaubte Zahl auf Werte von 0 bis 10 Stunden zu begrenzen
         InputFilter inputFilter = new InputFilter() {
             @Override
             public CharSequence filter(CharSequence source, int start, int end,
                                        Spanned dest, int dstart, int dend) {
                 try {
+                    // Ergebnis simulieren, wenn der neue Input in das bestehende Feld eingefügt wird
                     String result = dest.subSequence(0, dstart) + source.toString() + dest.subSequence(dend, dest.length());
                     int input = Integer.parseInt(result);
+                    // Nur Eingaben zwischen 0 und 10 sind erlaubt
                     if (input >= 0 && input <= 10) {
-                        return null; // erlaubt
+                        return null; // Eingabe zulassen
                     }
                 } catch (NumberFormatException e) {
-                    // Eingabe ist kein gültiger Integer
+                    // Falls Eingabe keine gültige Zahl ist -> Eingabe blockieren
                 }
                 return ""; // Eingabe blockieren
             }
         };
-
         editText.setFilters(new InputFilter[]{inputFilter});
-        //------------------------------------------------------------------------------------------------------------------
 
-
-
-        // Daten empfangen aus der Card die angetippt wurde
+        // Hole die Daten aus dem Intent (Übergeben von der vorherigen Activity)
         Intent intent = getIntent();
         String customerName = intent.getStringExtra("customerName");
         String customerAddress = intent.getStringExtra("customerAddress");
@@ -76,48 +80,44 @@ public class EmployeeCurrentJobActivity extends AppCompatActivity {
         String jobId = intent.getStringExtra("id");
         String orderNumber = intent.getStringExtra("orderNumber");
 
-
-        // Daten anzeigen
+        // Verknüpfe TextViews aus dem Layout mit Java-Objekten
         TextView customerNameTextView = findViewById(R.id.textView_customer_Mitarbeiter);
         TextView customerAddressTextView = findViewById(R.id.textView_address_Mitarbeiter);
         TextView reasonForWorkTextView = findViewById(R.id.textView_Einsatzgrund_Mitarbeiter);
         TextView workerTextView = findViewById(R.id.textView_Worker_Mitarbeiter);
         TextView priorityTextView = findViewById(R.id.textView_Priority_Mitarbeiter);
 
-
+        // Zeige die übergebenen Daten in den jeweiligen TextViews an
         customerNameTextView.setText(customerName);
         customerAddressTextView.setText(customerAddress);
         reasonForWorkTextView.setText(einsatzgrund);
         workerTextView.setText(mitarbeiter);
         priorityTextView.setText(prioritaet);
 
-
-        // Zurück Button zur Mitarbeiteransicht aktuelle Auftraege
+        // Listener für den Zurück-Button: Zur Mitarbeiterübersicht navigieren und aktuelle Activity beenden
         backToEmployeePage_Button_E.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Zur Activity "Neue Auftragsdaten"
                 Intent intent = new Intent(EmployeeCurrentJobActivity.this, EmployeeActivity.class);
                 startActivity(intent);
-                finish();  // Beendet die aktuelle Activity
+                finish();
             }
         });
 
-        // Über den Chat Button zur AddOn Page
+        // Listener für den Chat-Button: Öffnet eine AddOn Activity für weitere Funktionen
         chat_Employee_Button_E.setOnClickListener(v -> {
-           Intent addonIntent = new Intent(EmployeeCurrentJobActivity.this, EmployeeAddOnButtonsActivity.class);
-           startActivity(addonIntent);
+            Intent addonIntent = new Intent(EmployeeCurrentJobActivity.this, EmployeeAddOnButtonsActivity.class);
+            startActivity(addonIntent);
         });
 
-        // Button für weitere Informationen Dialog
+        // Listener für den Button "Weitere Informationen"
         showDialogMoreInformationButton_E.setOnClickListener(v -> {
-
-            // Prüfung auf null oder leerer Inhalt
+            // Falls keine weiteren Infos vorhanden sind, Standardtext setzen
             if (weitereInformationen[0] == null || weitereInformationen[0].trim().isEmpty()) {
                 weitereInformationen[0] = "Keine weiteren Informationen zum Auftrag vorhanden.";
             }
 
-            // Dialog anzeigen
+            // MaterialDialog mit den weiteren Informationen anzeigen
             new MaterialAlertDialogBuilder(this)
                     .setTitle("Weitere Informationen")
                     .setMessage(weitereInformationen[0])
@@ -125,16 +125,17 @@ public class EmployeeCurrentJobActivity extends AppCompatActivity {
                     .show();
         });
 
-        // Button für Fertigmeldung des Auftrags, wenn die Auftragsdauer eingetragen ist.
+        // Listener für den Fertigmelde-Button des Auftrags
         finishJobButton.setOnClickListener(v -> {
             String auftragsdauer = editText.getText().toString().trim();
 
+            // Prüfen, ob eine Auftragsdauer eingetragen wurde
             if (auftragsdauer.isEmpty()) {
                 Toast.makeText(this, "Bitte die geleistete Arbeitszeit eingeben!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Auftrag-Objekt mit Arbeitszeit erstellen (du brauchst hier den neuen Konstruktor)
+            // Erstelle ein Auftrag-Objekt mit den aktuellen Daten, inklusive Arbeitszeit
             Auftrag finishedJob = new Auftrag(
                     jobId,
                     orderNumber,
@@ -145,21 +146,20 @@ public class EmployeeCurrentJobActivity extends AppCompatActivity {
                     prioritaet,
                     weitereInformationen,
                     auftragsdauer
-
             );
 
-            // Firebase Referenzen
+            // Firebase Datenbankreferenzen: aktueller Auftrag und Fertig-Aufträge
             DatabaseReference db = FirebaseDatabase.getInstance().getReference();
             DatabaseReference currentRef = db.child("auftraege").child(jobId);
             DatabaseReference historyRef = db.child("fertigeAuftraege").child(jobId);
 
-            // In history schreiben, dann aus currentActivity entfernen
+            // Fertigen Auftrag in "fertigeAuftraege" speichern und aus "auftraege" löschen
             historyRef.setValue(finishedJob).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     currentRef.removeValue();
                     Toast.makeText(this, "Auftrag fertig gemeldet", Toast.LENGTH_SHORT).show();
 
-                    // Zurück zur Übersicht
+                    // Nach dem Fertigmelden zurück zur Mitarbeiterübersicht
                     Intent i = new Intent(EmployeeCurrentJobActivity.this, EmployeeActivity.class);
                     startActivity(i);
                     finish();
@@ -168,12 +168,5 @@ public class EmployeeCurrentJobActivity extends AppCompatActivity {
                 }
             });
         });
-
-
-
-
     }
-
-
-
 }

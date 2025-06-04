@@ -24,8 +24,8 @@ public class EmployeeAddOnButtonsActivity extends AppCompatActivity {
         Toast.makeText(this, "Bitte den zurück Button benutzen", Toast.LENGTH_SHORT).show();
     }
 
-    String[] names = {"Robin", "Lena"};
-    String[] numbers = {"01789126009", "015227247201"};
+    String[] names = {"Robin"};
+    String[] numbers = {};
     final String[] phoneNumber = {""}; //
     final String[] phoneNumberName = {""}; //
 

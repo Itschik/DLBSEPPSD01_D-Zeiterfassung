@@ -3,7 +3,6 @@ package com.example.zeiterfassung;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -22,22 +21,25 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Diese Activity zeigt dem angemeldeten Mitarbeiter seine fertigen Aufträge an.
+ * Daten werden aus Firebase Realtime Database geladen und in einem RecyclerView dargestellt.
+ */
 public class EmployeeWorkHistoryActivity extends AppCompatActivity {
 
     private MitarbeiterAuftragAdapter adapter;
 
-    // Hier wird der Zurückbutton für diese Activity blockiert
+    // Verhindert, dass der Benutzer mit dem Zurück-Button versehentlich zurücknavigiert
     @SuppressLint("MissingSuperCall")
     @Override
     public void onBackPressed() {
-
         Toast.makeText(this, "Bitte den Zurück Button benutzen!", Toast.LENGTH_SHORT).show();
     }
 
-
-
-    // Methode für das laden der Aufträge die dem angemeldeten Benutzer zugehörig sind
+    /**
+     * Lädt alle fertigen Aufträge aus Firebase, die vom aktuell eingeloggten Mitarbeiter stammen
+     * @param mitarbeiterName Der lesbare Benutzername (z. B. "Max Mustermann")
+     */
     private void ladeNurEigeneFertigeAuftraege(String mitarbeiterName) {
         DatabaseReference auftraegeRef = FirebaseDatabase.getInstance().getReference("fertigeAuftraege");
 
@@ -47,6 +49,7 @@ public class EmployeeWorkHistoryActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<Auftrag> eigeneAuftraege = new ArrayList<>();
 
+                // Alle fertigen Aufträge durchgehen und nur die eigenen einsammeln
                 for (DataSnapshot auftragSnap : snapshot.getChildren()) {
                     Auftrag auftrag = auftragSnap.getValue(Auftrag.class);
                     if (auftrag != null && auftrag.getMitarbeiter().equalsIgnoreCase(mitarbeiterName)) {
@@ -54,8 +57,8 @@ public class EmployeeWorkHistoryActivity extends AppCompatActivity {
                     }
                 }
 
-                // RecyclerView aktualisieren
-                adapter.setAuftraege(eigeneAuftraege); // Methode im Adapter
+                // Daten an den Adapter übergeben und Liste aktualisieren
+                adapter.setAuftraege(eigeneAuftraege);
                 adapter.notifyDataSetChanged();
             }
 
@@ -66,48 +69,46 @@ public class EmployeeWorkHistoryActivity extends AppCompatActivity {
         });
     }
 
-
+    /**
+     * Wird beim Erstellen der Activity aufgerufen
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Layout mit dieser Activity verknüpfen
+        setContentView(R.layout.activity_employee_workhistory);
 
-        // Hier wird das Layout mit der Activity verknüpft
-        setContentView(R.layout.activity_employee_workhistory);  // <- Der Name der XML-Datei aus res/layout
-
-        // Button Zurück zur EmployeeActivity
+        // Zurück-Button initialisieren → führt zur EmployeeActivity zurück
         Button backButton_E = findViewById(R.id.backToEmployeePage_Button);
-        backButton_E.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(EmployeeWorkHistoryActivity.this, EmployeeActivity.class);
-                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                finish();  // Beendet die aktuelle Activity
-            }
+        backButton_E.setOnClickListener(v -> {
+            Intent intent = new Intent(EmployeeWorkHistoryActivity.this, EmployeeActivity.class);
+            startActivity(intent);
+            finish();  // Beendet diese Activity, um keine Rücknavigation zu erlauben
         });
 
-
-        //_________________________________________________________________________________________________________________________
-        // Nur die Aufträge aus der Firebase laden, welche dem angemeldeten Benutzer zugehörig sind
-        //Variablen
-        RecyclerView recyclerView = findViewById(R.id.doneOrderrecyclerView_E);  // Falls du ihn so benannt hast
+        // RecyclerView aufbauen
+        RecyclerView recyclerView = findViewById(R.id.doneOrderrecyclerView_E);
         adapter = new MitarbeiterAuftragAdapter(new ArrayList<>());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
+        // Aktuellen Benutzer abrufen
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         String uid = mAuth.getCurrentUser().getUid();
 
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(uid).child("userName");
+        // Benutzername aus Firebase holen
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users")
+                .child(uid)
+                .child("userName");
 
+        // Benutzernamen auslesen und lesbare Version erzeugen
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String loginUserName = snapshot.getValue(String.class);
                 if (loginUserName != null) {
-                    // Leerzeichen-Version erzeugen → "Alban Demirci"
-                    String readableName = loginUserName.replace(".", " ");
+                    String readableName = loginUserName.replace(".", " ");  // z.B. "max.mustermann" → "max mustermann"
                     ladeNurEigeneFertigeAuftraege(readableName);
                 }
             }
@@ -117,8 +118,5 @@ public class EmployeeWorkHistoryActivity extends AppCompatActivity {
                 Toast.makeText(EmployeeWorkHistoryActivity.this, "Fehler beim Laden des Benutzers", Toast.LENGTH_SHORT).show();
             }
         });
-
-        //_________________________________________________________________________________________________________________________
-
     }
 }

@@ -6,12 +6,20 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+/**
+ * Diese Activity zeigt zusätzliche Informationen für den Supervisor an.
+ * Der Zurück-Button (System-Button) wird deaktiviert, um gezielte Navigation zu erzwingen.
+ */
 public class SupervisorMoreInformationActivity extends AppCompatActivity {
 
-    // Hier wird der Zurückbutton für diese Activity blockiert
+    /**
+     * Überschreibt das Verhalten des Android-System-Zurück-Buttons.
+     * Statt die Activity zu verlassen, wird eine Info angezeigt.
+     */
     @SuppressLint("MissingSuperCall")
     @Override
     public void onBackPressed() {
@@ -21,23 +29,21 @@ public class SupervisorMoreInformationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_supervisor_more_information);  // <--- Name der Layout-XML
+        // Verknüpft das Layout mit dieser Activity
+        setContentView(R.layout.activity_supervisor_more_information);
 
+        // Button zum Zurücknavigieren zur "Neuen Auftrag erstellen"-Seite
         Button backToSupervisorAddNewJob_S = findViewById(R.id.backToAddNewJobPage_supervisor_Button);
 
-
-// Zurück Button zur Add New Job Activity
+        // Click-Listener für den Zurück-Button
         backToSupervisorAddNewJob_S.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Zurück zur Add New JobActivity
+                // Wechsel zurück zur SupervisorNewJobActivity
                 Intent intent = new Intent(SupervisorMoreInformationActivity.this, SupervisorNewJobActivity.class);
-                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-                finish();  // Beendet die aktuelle Activity
+                finish(); // Schließt die aktuelle Activity
             }
         });
-
-
     }
 }

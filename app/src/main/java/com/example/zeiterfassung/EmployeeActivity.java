@@ -20,20 +20,29 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Activity zur Anzeige der aktuellen Aufträge eines Mitarbeiters.
+ * Zeigt nur Aufträge an, die dem aktuell angemeldeten Mitarbeiter zugeordnet sind.
+ */
 public class EmployeeActivity extends AppCompatActivity {
 
-    // Hier wird der Zurückbutton für diese Activity blockiert
+    /**
+     * Verhindert, dass der Zurück-Button der Hardware die Activity verlässt.
+     * Stattdessen wird eine Toast-Meldung angezeigt.
+     */
     @SuppressLint("MissingSuperCall")
     @Override
     public void onBackPressed() {
-
         Toast.makeText(this, "Bitte den Abmelden Button benutzen!", Toast.LENGTH_SHORT).show();
     }
 
+    // Adapter für die RecyclerView, um die Aufträge darzustellen
     private MitarbeiterAuftragAdapter adapter;
 
-// Methode für das laden der Aufträge die dem angemeldeten Benutzer zugehörig sind
+    /**
+     * Lädt aus der Firebase-Datenbank nur die Aufträge, die zum angegebenen Mitarbeiter gehören.
+     * @param mitarbeiterName Name des Mitarbeiters (z.B. "Alban Demirci")
+     */
     private void ladeNurEigeneAuftraege(String mitarbeiterName) {
         DatabaseReference auftraegeRef = FirebaseDatabase.getInstance().getReference("auftraege");
 
@@ -43,6 +52,7 @@ public class EmployeeActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<Auftrag> eigeneAuftraege = new ArrayList<>();
 
+                // Alle Aufträge durchgehen und nur die mit passendem Mitarbeiter auswählen
                 for (DataSnapshot auftragSnap : snapshot.getChildren()) {
                     Auftrag auftrag = auftragSnap.getValue(Auftrag.class);
                     if (auftrag != null && auftrag.getMitarbeiter().equalsIgnoreCase(mitarbeiterName)) {
@@ -50,8 +60,8 @@ public class EmployeeActivity extends AppCompatActivity {
                     }
                 }
 
-                // RecyclerView aktualisieren
-                adapter.setAuftraege(eigeneAuftraege); // Methode im Adapter
+                // RecyclerView-Adapter mit den gefilterten Aufträgen aktualisieren
+                adapter.setAuftraege(eigeneAuftraege);
                 adapter.notifyDataSetChanged();
             }
 
@@ -62,35 +72,35 @@ public class EmployeeActivity extends AppCompatActivity {
         });
     }
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Hier wird das Layout mit der Activity verknüpft
-        setContentView(R.layout.activity_employee);  // <- Der Name der XML-Datei aus res/layout
+        // Verknüpft die Activity mit dem Layout aus res/layout/activity_employee.xml
+        setContentView(R.layout.activity_employee);
 
-        //_________________________________________________________________________________________________________________________
-        // Nur die Aufträge aus der Firebase laden, welche dem angemeldeten Benutzer zugehörig sind
-        //Variablen
+        // RecyclerView initialisieren und LayoutManager setzen (Linear, vertikal)
         RecyclerView recyclerView = findViewById(R.id.EmployeeCurrentJobrecyclerView);
         adapter = new MitarbeiterAuftragAdapter(new ArrayList<>());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
+        // Aktuell angemeldeten Benutzer über Firebase Auth ermitteln
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         String uid = mAuth.getCurrentUser().getUid();
 
+        // Firebase Referenz zum Benutzernamen des angemeldeten Users
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(uid).child("userName");
 
+        // Einmaliger Listener zum Laden des Benutzernamens
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String loginUserName = snapshot.getValue(String.class); // z. B. "Alban.Demirci"
+                // Benutzername auslesen (z.B. "Alban.Demirci")
+                String loginUserName = snapshot.getValue(String.class);
                 if (loginUserName != null) {
-                    // Leerzeichen-Version erzeugen → "Alban Demirci"
-                    String readableName = loginUserName.replace(".", " ");
-                    ladeNurEigeneAuftraege(readableName);
+
+                    // Nur die Aufträge laden, die dem angemeldeten Benutzer gehören
+                    ladeNurEigeneAuftraege(loginUserName);
                 }
             }
 
@@ -100,37 +110,28 @@ public class EmployeeActivity extends AppCompatActivity {
             }
         });
 
-        //_________________________________________________________________________________________________________________________
-
-
-        // Zuweisung der Variablen
+        // Buttons aus Layout finden
         Button logoutButton_E = findViewById(R.id.backToLoginPage_employee_Button);
         Button backButton_E = findViewById(R.id.workHistory_Employee_Button);
 
-
-        // Abmelden Button - Abmeldefunktion
+        // Abmelden-Button: Navigiert zurück zur LoginActivity und beendet diese Activity
         logoutButton_E.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Zurück zur LoginActivity
                 Intent intent = new Intent(EmployeeActivity.this, LoginActivity.class);
                 startActivity(intent);
-                finish();  // Beendet die aktuelle Activity
+                finish();
             }
         });
 
-
-        // Button für zurück zur Mitarbeiteransicht
+        // Button für "Arbeitsverlauf" (History) - öffnet die Work History Activity
         backButton_E.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Zurück zur Mitarbeiteransicht
                 Intent intent = new Intent(EmployeeActivity.this, EmployeeWorkHistoryActivity.class);
-                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-                finish();  // Beendet die aktuelle Activity
+                finish();
             }
         });
-
     }
 }

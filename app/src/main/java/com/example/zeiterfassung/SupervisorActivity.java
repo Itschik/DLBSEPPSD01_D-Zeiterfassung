@@ -3,7 +3,6 @@ package com.example.zeiterfassung;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -18,22 +17,18 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 public class SupervisorActivity extends AppCompatActivity {
 
-    //----------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // Variablen
-    private RecyclerView recyclerView;
-    private AuftragAdapter adapter;
-    private List<Auftrag> auftragList;
+    private AuftragAdapter adapter;                  // Adapter für die RecyclerView
+    private List<Auftrag> auftragList;               // Liste von Aufträgen (Modellklasse)
 
-    private DatabaseReference auftragRef;
-    //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
-    /** @noinspection deprecation*/ // Hier wird der Zurückbutton für diese Activity blockiert
+    /**
+     * Sperrt den Hardware-Zurückbutton und zeigt einen Hinweis.
+     * @noinspection deprecation
+     */
     @SuppressLint("MissingSuperCall")
     @Override
     public void onBackPressed() {
@@ -41,90 +36,84 @@ public class SupervisorActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Layout dieser Activity laden (res/layout/activity_supervisor.xml)
+        setContentView(R.layout.activity_supervisor);
 
-        // Hier wird das Layout mit der Activity verknüpft
-        setContentView(R.layout.activity_supervisor);  // <- Der Name der XML-Datei aus res/layout
-
-        // Verknüpfung der XML-Elemente mit dem Code
+        // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+        // UI-Elemente mit den zugehörigen IDs aus dem Layout verknüpfen
         Button logoutButton_S = findViewById(R.id.backToLoginPage_supervisor_Button);
         Button addNewJobButton_S = findViewById(R.id.addJob_Button);
         Button goToWorkHistorySupvervisorButton_S = findViewById(R.id.goToWorkHistory_Supervisor_Button);
+        // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-        //----------------------------------------------------------------------------------------------------------------------------------------------------------------
-        // Aufträge aus der Firebase laden und als Card in die Recyclerview einfügen
-        recyclerView = findViewById(R.id.SupervisorCurrentJobrecyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+        // RecyclerView vorbereiten, um aktuelle Aufträge als Cards anzuzeigen
 
-        auftragList = new ArrayList<>();
-        adapter = new AuftragAdapter(auftragList);
-        recyclerView.setAdapter(adapter);
+        // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+        // UI-Komponenten und Datenquellen
+        // Anzeigeelement für aktuelle Aufträge (Liste)
+        RecyclerView recyclerView = findViewById(R.id.SupervisorCurrentJobrecyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this)); // Vertikale Liste
 
-        auftragRef = FirebaseDatabase.getInstance().getReference("auftraege");
+        auftragList = new ArrayList<>();               // Initialisiert leere Liste
+        adapter = new AuftragAdapter(auftragList);     // Adapter mit dieser Liste verbinden
+        recyclerView.setAdapter(adapter);              // Adapter an RecyclerView setzen
 
-        // Listener, der die Daten aus Firebase liest
+        // Firebase-Datenbankreferenz auf den Knoten "auftraege"
+        DatabaseReference auftragRef = FirebaseDatabase.getInstance().getReference("auftraege"); // Firebase-Knoten "auftraege"
+
+        // Firebase-Datenänderungen überwachen
         auftragRef.addValueEventListener(new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                auftragList.clear();
+                auftragList.clear(); // Vorherige Daten entfernen
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Auftrag auftrag = dataSnapshot.getValue(Auftrag.class);
                     if (auftrag != null) {
-                        auftragList.add(auftrag);
+                        auftragList.add(auftrag); // Auftrag zur Liste hinzufügen
                     }
                 }
-                adapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged(); // UI aktualisieren
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                // Fehler beim Abruf der Daten
                 Toast.makeText(SupervisorActivity.this, "Fehler beim Laden der Aufträge", Toast.LENGTH_SHORT).show();
             }
         });
-        //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
-        // Zurück Button zur Login Activity
-        logoutButton_S.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Zurück zur LoginActivity
-                Intent intent = new Intent(SupervisorActivity.this, LoginActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                finish();  // Beendet die aktuelle Activity
-            }
+        // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+        // Button: Abmelden → zurück zur LoginActivity
+        logoutButton_S.setOnClickListener(v -> {
+            Intent intent = new Intent(SupervisorActivity.this, LoginActivity.class);
+            // Stack löschen, damit "Zurück" nicht wieder hierher führt
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish(); // Diese Activity beenden
         });
 
-        // Button zur Activity für neue Auftragsdaten - Supervisor
-        addNewJobButton_S.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Zur Activity "Neue Auftragsdaten"
-                Intent intent = new Intent(SupervisorActivity.this, SupervisorNewJobActivity.class);
-                startActivity(intent);
-                finish();  // Beendet die aktuelle Activity
-            }
+        // Button: Neuen Auftrag hinzufügen
+        addNewJobButton_S.setOnClickListener(v -> {
+            Intent intent = new Intent(SupervisorActivity.this, SupervisorNewJobActivity.class);
+            startActivity(intent);
+            finish(); // Aktuelle Activity beenden
         });
 
-        // Button zur Activity für fertige Aufträge - Supervisor
-        goToWorkHistorySupvervisorButton_S.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Zur Activity "fertige Aufträge"
-                Intent intent = new Intent(SupervisorActivity.this, SupervisorWorkHistoryActivity.class);
-                startActivity(intent);
-                finish();  // Beendet die aktuelle Activity
-            }
+        // Button: Zur Auftrags-Historie
+        goToWorkHistorySupvervisorButton_S.setOnClickListener(v -> {
+            Intent intent = new Intent(SupervisorActivity.this, SupervisorWorkHistoryActivity.class);
+            startActivity(intent);
+            finish(); // Aktuelle Activity beenden
         });
-
-
+        // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
     }
 }

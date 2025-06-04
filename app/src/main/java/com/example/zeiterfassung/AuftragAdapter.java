@@ -20,22 +20,33 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
+/**
+ * Adapter für RecyclerView, um eine Liste von Aufträgen anzuzeigen.
+ * Unterstützt Klick- und LongClick-Events für jede Kartenansicht.
+ */
 public class AuftragAdapter extends RecyclerView.Adapter<AuftragAdapter.AuftragViewHolder> {
 
+    // Liste der Aufträge, die angezeigt werden sollen
     private final List<Auftrag> auftragList;
 
+    /**
+     * Konstruktor des Adapters.
+     * @param auftragList Liste von Aufträgen, die angezeigt werden.
+     */
     public AuftragAdapter(List<Auftrag> auftragList) {
         this.auftragList = auftragList;
     }
 
-
-
+    /**
+     * ViewHolder definiert die einzelnen UI-Elemente in der Kartenansicht.
+     */
     public static class AuftragViewHolder extends RecyclerView.ViewHolder {
         TextView orderNumberTextView, customerNameTextView, einsatzgrundTextView, addressTextView, mitarbeiterTextView;
         View cardBackground;
 
         public AuftragViewHolder(@NonNull View itemView) {
             super(itemView);
+            // Views aus dem Layout finden
             orderNumberTextView = itemView.findViewById(R.id.orderNumberText);
             einsatzgrundTextView = itemView.findViewById(R.id.reasonForOrderText);
             customerNameTextView = itemView.findViewById(R.id.customerText);
@@ -45,6 +56,9 @@ public class AuftragAdapter extends RecyclerView.Adapter<AuftragAdapter.AuftragV
         }
     }
 
+    /**
+     * Erzeugt neue ViewHolder-Instanzen und inflatet das Kartenlayout.
+     */
     @Override
     public AuftragViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -52,17 +66,23 @@ public class AuftragAdapter extends RecyclerView.Adapter<AuftragAdapter.AuftragV
         return new AuftragViewHolder(view);
     }
 
+    /**
+     * Bindet die Auftragsdaten an die Views im ViewHolder.
+     * Setzt auch die Hintergrundfarbe je nach Priorität.
+     * Definiert Klick- und Long-Click-Verhalten der Karten.
+     */
     @Override
     public void onBindViewHolder(@NonNull AuftragViewHolder holder, int position) {
         Auftrag auftrag = auftragList.get(position);
 
+        // Auftragsinformationen in die TextViews eintragen
         holder.orderNumberTextView.setText("Auftragsnummer: " + auftrag.getOrderNumber());
         holder.einsatzgrundTextView.setText("Einsatzgrund: " + auftrag.getEinsatzgrund());
         holder.customerNameTextView.setText("Kundenname: " + auftrag.getCustomerName());
         holder.addressTextView.setText("Einsatzort: " + auftrag.getCustomerAddress());
         holder.mitarbeiterTextView.setText("Mitarbeiter: " + auftrag.getMitarbeiter());
 
-        // Lange die Card berühren, um die ausgewählte card zu löschen
+        // LongClick: Zeigt einen Dialog zum Löschen des Auftrags an
         holder.itemView.setOnLongClickListener(v -> {
             Context context = v.getContext();
 
@@ -70,7 +90,7 @@ public class AuftragAdapter extends RecyclerView.Adapter<AuftragAdapter.AuftragV
                     .setTitle("Auftrag löschen")
                     .setMessage("Möchten Sie diesen Auftrag wirklich löschen?")
                     .setPositiveButton("Löschen", (dialog, which) -> {
-                        // Hier wird der Auftrag aus der Datenbank gelöscht
+                        // Auftrag aus Firebase-Datenbank entfernen
                         String auftragId = auftrag.getId();
 
                         FirebaseDatabase.getInstance()
@@ -87,14 +107,10 @@ public class AuftragAdapter extends RecyclerView.Adapter<AuftragAdapter.AuftragV
                     .setNegativeButton("Abbrechen", null)
                     .show();
 
-            return true; // LongClick wurde behandelt
+            return true; // LongClick-Ereignis wurde behandelt
         });
 
-
-
-
-
-
+        // Klick auf Karte: Öffnet Detailansicht (SupervisorCurrentJobActivity) mit Auftragsdaten
         holder.itemView.setOnClickListener(v -> {
             Context context = v.getContext();
             Intent intent = new Intent(context, SupervisorCurrentJobActivity.class);
@@ -108,12 +124,13 @@ public class AuftragAdapter extends RecyclerView.Adapter<AuftragAdapter.AuftragV
             intent.putExtra("weitereInformationen", auftrag.getMoreInformation());
             context.startActivity(intent);
 
+            // Falls Kontext eine Activity ist, diese beenden, damit keine unnötige History entsteht
             if (context instanceof Activity) {
                 ((Activity) context).finish();
             }
         });
 
-        // Kartenfarbe nach Priorität setzen
+        // Setze Hintergrundfarbe der Karte abhängig von der Priorität
         String prioritaet = auftrag.getPrioritaet();
         if (prioritaet != null) {
             switch (prioritaet.trim().toLowerCase()) {
@@ -127,17 +144,18 @@ public class AuftragAdapter extends RecyclerView.Adapter<AuftragAdapter.AuftragV
                     holder.cardBackground.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.prioritaet_Niedrig));
                     break;
                 default:
+                    // Weiß als Standardfarbe, falls Priorität unbekannt ist
                     holder.cardBackground.setBackgroundColor(Color.WHITE);
                     Log.d("PrioritaetDebug", "Unbekannte Priorität: " + prioritaet);
             }
         }
     }
 
+    /**
+     * Gibt die Anzahl der Aufträge zurück.
+     */
     @Override
     public int getItemCount() {
         return auftragList.size();
     }
-
-
-
 }
