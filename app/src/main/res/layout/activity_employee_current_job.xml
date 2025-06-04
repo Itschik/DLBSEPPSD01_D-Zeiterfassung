@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:textAlignment="textStart">
+
+    <TextView
+        android:id="@+id/textView_Priority_Mitarbeiter"
+        android:layout_width="304dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="24dp"
+        android:text="Priorität"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView_priority"
+        app:layout_constraintStart_toEndOf="@+id/imageView_priority" />
+
+    <TextView
+        android:id="@+id/textView_Worker_Mitarbeiter"
+        android:layout_width="304dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="24dp"
+        android:text="Mitarbeiter"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView_worker"
+        app:layout_constraintStart_toEndOf="@+id/imageView_worker" />
+
+    <ImageView
+        android:id="@+id/imageView_worker"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView_setTime"
+        app:srcCompat="@drawable/engineering_24px" />
+
+    <ImageView
+        android:id="@+id/imageView_priority"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView_worker"
+        app:srcCompat="@drawable/priority_high_24px" />
+
+    <ImageView
+        android:id="@+id/imageView_setTime"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView_moreInformation"
+        app:srcCompat="@drawable/more_time_24px" />
+
+    <ImageView
+        android:id="@+id/imageView_moreInformation"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView_job"
+        app:srcCompat="@drawable/info_24px" />
+
+    <TextView
+        android:id="@+id/textView_Einsatzgrund_Mitarbeiter"
+        android:layout_width="304dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="24dp"
+        android:text="Einsatzgrund"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView_job"
+        app:layout_constraintStart_toEndOf="@+id/imageView_job" />
+
+    <ImageView
+        android:id="@+id/imageView_job"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView_address"
+        app:srcCompat="@drawable/siren_question_24px" />
+
+    <TextView
+        android:id="@+id/textView_address_Mitarbeiter"
+        android:layout_width="304dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="24dp"
+        android:text="Adresse / Einsatzort"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView_address"
+        app:layout_constraintStart_toEndOf="@+id/imageView_address" />
+
+    <ImageView
+        android:id="@+id/imageView_address"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView_customer"
+        app:srcCompat="@drawable/location_on_24px" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/chat_Button_Mitarbeiter"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="160dp"
+        app:icon="@drawable/mail_24px"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:iconSize="30dp"
+        app:layout_constraintBottom_toBottomOf="@+id/backToLoginPage_Button_Mitarbeiter"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <Button
+        android:id="@+id/moreInformationElevatedButton"
+        style="@style/Widget.Material3.Button.ElevatedButton"
+        android:layout_width="304dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="24dp"
+        android:text="Weitere Informationen zum Auftrag"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView_moreInformation"
+        app:layout_constraintStart_toEndOf="@+id/imageView_moreInformation" />
+
+    <Button
+        android:id="@+id/backToLoginPage_Button_Mitarbeiter"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="125dp"
+        android:layout_height="60dp"
+        android:text="zurück"
+        android:textAlignment="gravity"
+        android:textStyle="bold"
+        app:icon="@drawable/arrow_back_24dp"
+        app:iconSize="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/jobDoneButton_Mitarbeiter"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="125dp"
+        android:layout_height="60dp"
+        android:text="Fertig"
+        android:textAlignment="viewStart"
+        android:textStyle="bold"
+        app:icon="@drawable/data_check_24dp"
+        app:iconSize="24dp"
+        app:layout_constraintBottom_toBottomOf="@+id/backToLoginPage_Button_Mitarbeiter"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:text="Mitarbeiteransicht: Daten aktueller Auftrag"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView_customer"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="40dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:srcCompat="@drawable/contacts_product_24px" />
+
+    <TextView
+        android:id="@+id/textView_customer_Mitarbeiter"
+        android:layout_width="304dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="24dp"
+        android:text="Kundenname"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView_customer"
+        app:layout_constraintStart_toEndOf="@+id/imageView_customer" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textEdit_auftragsDauerMitarbeiter"
+        android:layout_width="304dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="24dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView_setTime"
+        app:layout_constraintStart_toEndOf="@+id/imageView_setTime">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/auftragsDauerMitarbeiter_Input"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="Auftragsdauer eingeben"
+            android:inputType="numberSigned"
+            android:textAlignment="viewStart"
+            android:textSize="14sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

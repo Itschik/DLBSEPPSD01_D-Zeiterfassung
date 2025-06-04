@@ -7,4 +7,9 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="prioritaet_Hoch">#FFCDD2</color>      <!-- rot -->
+    <color name="prioritaet_Mittel">#FFF9C4</color>    <!-- gelb -->
+    <color name="prioritaet_Niedrig">#C8E6C9</color>   <!-- grün -->
+
 </resources>

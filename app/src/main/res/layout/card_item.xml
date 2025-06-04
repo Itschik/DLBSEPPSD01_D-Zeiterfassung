@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    android:id="@+id/cardViewBackground"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:id="@+id/linearLayoutCardItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/orderNumberText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Auftragsnummer: 0123456789"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/reasonForOrderText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Einsatzgrund: Wartung"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/customerText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kundenname: Peter"
+            android:layout_marginTop="8dp" />
+
+
+        <TextView
+            android:id="@+id/addressText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Einsatzort: Herbert-Mayer-Strasse 17, 89908 Bayern"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/cardItem_mitarbeiter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mitarbeiter: Eugen"
+            android:layout_marginTop="8dp" />
+
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

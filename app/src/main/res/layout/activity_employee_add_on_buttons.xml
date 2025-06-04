@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mitarbeiteransicht: Add On Buttons"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/ADD_ON_Button_1_E"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="380dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="64dp"
+        android:gravity="center"
+        android:text="Weitere Person ist erforderlich"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dropdown_layout_phoneNumber_E" />
+
+    <Button
+        android:id="@+id/ADD_ON_Button_2_E"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="380dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="32dp"
+        android:gravity="center"
+        android:text="Werkzeug ist erforderlich"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ADD_ON_Button_3_E" />
+
+    <Button
+        android:id="@+id/ADD_ON_Button_3_E"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="380dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="32dp"
+        android:gravity="center"
+        android:text="Material ist erforderlich"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ADD_ON_Button_1_E" />
+
+    <Button
+        android:id="@+id/ADD_ON_Button_4_E"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="380dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="32dp"
+        android:gravity="center"
+        android:text="Bitte anrufen, Frage zum Auftrag"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ADD_ON_Button_2_E" />
+
+    <Button
+        android:id="@+id/backToEmployeeCurrentJob_Button_E"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:text="Zurück"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        app:icon="@drawable/arrow_back_24dp"
+        app:iconSize="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/dropdown_layout_phoneNumber_E"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:hint="Empfänger auswählen"
+        app:layout_constraintStart_toStartOf="@+id/backToEmployeeCurrentJob_Button_E"
+        app:layout_constraintTop_toBottomOf="@+id/textView3">
+
+        <AutoCompleteTextView
+            android:id="@+id/recipientDropdown_E"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

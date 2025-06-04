@@ -37,9 +37,11 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.firebase.database)
+    implementation(libs.firebase.auth)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-
+    // Material Design Bibliothek einbinden
+    implementation ("com.google.android.material:material:1.11.0")
 
 }
