@@ -34,8 +34,6 @@ xmlns:tools="http://schemas.android.com/tools">
     <!-- Vorgesetzter Fertige Aufträge-Ansicht -->
     <activity android:name=".SupervisorWorkHistoryActivity" />
 
-    <!-- Weitere Informationen Vorgesetzter-Ansicht -->
-    <activity android:name=".SupervisorMoreInformationActivity" />
 
     <!-- Neuer Auftrag anlegen-Ansicht -->
     <activity android:name=".SupervisorNewJobActivity" />
